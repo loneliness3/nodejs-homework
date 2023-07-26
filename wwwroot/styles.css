@@ -1,0 +1,11 @@
+body{
+    background-color: blueviolet;
+}
+
+.home{
+    background-color: green;
+    text-align: center;
+    font-size: xx-large;
+    color: white;
+    font-weight: 900;
+}
