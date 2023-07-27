@@ -247,9 +247,12 @@ const editUser = (req, res) => {
         // }) 
 
         let updatedUsers = users.map(x => {
-            var returnValue = { ...x, name: req.body.name || x.name, email: req.body.email || x.email};
-
-            return returnValue
+            if(filter.id == x.id){
+                var returnValue = { ...x, name: req.body.name || x.name, email: req.body.email || x.email};
+                return returnValue
+            }else{
+                return x
+            }
         })
         console.log(updatedUsers)
 
