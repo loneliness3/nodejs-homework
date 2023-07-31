@@ -69,7 +69,7 @@ const path = require('path');
 const url = require('url');
 const io = require('socket.io')(http);
 const colors = require('colors/safe');
-const argon2 = require('argon2')
+const morgan = require('morgan')
 // const routes = require('route')
 
 const fruitsData = require('./data');
@@ -104,13 +104,16 @@ const server = http.createServer(start)
 const data = fs.readFileSync(`${__dirname}/tours.json`);
 const tours = JSON.parse(data);
 
-const usersData = fs.readFileSync(`${__dirname}/users.json`)
-const users = JSON.parse(usersData);
-
 app.use(express.static("wwwroot"))
 app.use(express.json());
+app.use(morgan("dev"))
 // app.use(routes)
 app.use(express.static(path.join(__dirname, 'wwwroot/styles.css')))
+
+const reqTime = require('./middlewares/requestTime');
+const userRouter = require('./routers/userRoute');
+
+
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'wwwroot/index.html'))
@@ -191,97 +194,14 @@ app.route("/api/v1/tours/:id/:price?").get(getSingleTourById)
 // app.route("/api/v1/tours").get(getTours)
 
 
-const getUsers = (req, res) => {
-    res.status(200).json({
-        status: 200,
-        message: "Success",
-        length: users.length,
-        data: users
-    })
-}
-const addUsers = async (req, res) => {
-    const newId = users.length + 1;
-    const hashedPass = await argon2.hash("req.body.password")
-    const newUser = Object.assign(req.body, { id: newId, password: hashedPass });
-    users.push(newUser);
-    console.log(users, users.length)
-    fs.writeFileSync('./users.json',
-        JSON.stringify(users), (error) => {
-            if (error) {
-                res.status(300).json({ message: "An Error Occured" })
-            } else {
-                res.status(201).json({ message: "success" })
-            }
-        }
-    )
-    res.status(201).json({ message: "success" })
-}
-const siginIn = async (req, res) => {
-    let userExits = users.find(user => {
-        if (user.email === req.body.email) {
-            return user;
-        }
-    })
-    if (userExits) {
-        const pass = await argon2.verify(userExits.password, req.body.password)
-        if (pass) {
-            return userExits;
-        }
-    }
-    console.log(userExits, 'jjj')
-    res.status(200).json(userExits)
-}
-const editUser = (req, res) => {
-    let filter = users.find(user => {
-        if (user.id == req.params.id) {
-            return user
-        }
-    })
+app.use(reqTime)
 
-    if (filter) {
-        // users.forEach(x =>{
-        //     if(filter.id == x.id){
-        //         console.log('ss')
-        //         x = {...x, name: req.body.name || x.name, email: req.body.email || x.email}
-        //     }
-        // }) 
+app.use("/api/v1", userRouter)
 
-        let updatedUsers = users.map(x => {
-            if(filter.id == x.id){
-                var returnValue = { ...x, name: req.body.name || x.name, email: req.body.email || x.email};
-                return returnValue
-            }else{
-                return x
-            }
-        })
-        console.log(updatedUsers)
+// app.route("/api/v1/users").get(getUsers).post(addUsers)
+// app.route("/api/v1/users/:id").patch(editUser).delete(deleteUsers)
+// app.route("/api/v1/sign-in").post(siginIn)
 
-        fs.writeFileSync('./users.json',
-        JSON.stringify(updatedUsers))
-        res.status(200).json({ "message": "successfully edited" })
-    } else {
-        res.status(404).json({ "message": "user not found" })
-    }
-}
-const deleteUsers = (req, res) => {
-    let filter = users.find(user => {
-        if (user.id == req.params.id) {
-            return user
-        }
-    })
-    if (filter) {
-        var deleteUser = users.findIndex((deleteuser) => deleteuser.id === filter.id);
-        users.splice(deleteUser, 1);
-        fs.writeFileSync(`${__dirname}/users.json`, JSON.stringify(users))
-        res.status(200).json({ "message": "successfully deleted" })
-    } else {
-        res.status(404).json({ "message": "user not found" })
-    }
-}
-
-app.route("/api/v1/users").get(getUsers).post(addUsers)
-app.route("/api/v1/users/:id").patch(editUser).delete(deleteUsers)
-app.route("/api/v1/sign-in").post(siginIn)
 
 
 io.on('connection', (socket) => {

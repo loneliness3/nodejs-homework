@@ -1,14 +1,1 @@
-[
-    {
-        "name": "Lonely",
-        "email": "lonely@gmail.com",
-        "password": "$argon2id$v=19$m=65536,t=3,p=4$UYU/co5uPwoWd78llvBAkw$CFM5fEVCx/dpY9QLDqrOV7fQeJnjA6OQbq8W78avgJc",
-        "id": 1
-    },
-    {
-        "name": "Lonely2",
-        "email": "user2@gmail.com",
-        "password": "$argon2id$v=19$m=65536,t=3,p=4$6mY67lAYDsr2pj74bJvySQ$ei7WfQsiEzOUhXdmvmXCYdxpTujFQKsUAgOfKq/Bcvw",
-        "id": 2
-    }
-]
+[{"name":"Lonely","email":"lonely@gmail.com","password":"$argon2id$v=19$m=65536,t=3,p=4$UYU/co5uPwoWd78llvBAkw$CFM5fEVCx/dpY9QLDqrOV7fQeJnjA6OQbq8W78avgJc","id":1},{"name":"Lonely2","email":"user2@gmail.com","password":"$argon2id$v=19$m=65536,t=3,p=4$6mY67lAYDsr2pj74bJvySQ$ei7WfQsiEzOUhXdmvmXCYdxpTujFQKsUAgOfKq/Bcvw","id":2},{"name":"User3","email":"user3@gmail.com","password":"$argon2id$v=19$m=65536,t=3,p=4$XZD2c25Pjw6fQc+aC9VUwQ$wXjYPDcadcV9Pji8rurtyytVs2Heh8Euv9JgXJQtpGI","id":3}]
